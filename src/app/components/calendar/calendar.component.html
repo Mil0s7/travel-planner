@@ -1,0 +1,53 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="logo">🧳</div>
+    <nav>
+      <button
+        *ngFor="let item of navItems"
+        class="nav-item"
+        [class.active]="item === activeNav"
+        (click)="activeNav = item"
+      >
+        {{ item }}
+      </button>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <h1>Travel Planner</h1>
+      <div class="summary">Łączny koszt zaplanowanych podróży: <strong>{{ totalCost() | number:'1.0-0' }} PLN</strong></div>
+    </header>
+
+    <div class="grid-wrapper">
+      <div class="grid" [style.gridTemplateColumns]="'70px repeat(' + days.length + ', 1fr)'">
+        <div class="corner"></div>
+        <div class="day-head" *ngFor="let day of days">{{ day }}</div>
+
+        <ng-container *ngFor="let hour of hours">
+          <div class="hour-label">{{ hour }}</div>
+          <div class="cell" *ngFor="let day of days" (click)="openCell(day, hour)">
+            <div
+              class="entry"
+              *ngIf="entryFor(day, hour) as e"
+              [style.background]="e.color"
+            >
+              <div class="entry-title">{{ e.city }}, {{ e.country }}</div>
+              <div class="entry-sub" *ngIf="e.weather">{{ e.weather.icon }} {{ e.weather.temperatureC }}°C</div>
+              <div class="entry-sub">{{ e.cost | number:'1.0-0' }} PLN</div>
+            </div>
+            <span class="add-hint" *ngIf="!entryFor(day, hour)">+</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </main>
+</div>
+
+<app-trip-modal
+  *ngIf="modalContext"
+  [context]="modalContext"
+  (close)="closeModal()"
+  (save)="saveEntry($event)"
+  (delete)="deleteEntry($event)"
+></app-trip-modal>

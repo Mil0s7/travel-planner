@@ -1,0 +1,51 @@
+<div class="backdrop" (click)="onClose()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>{{ context.day }} · {{ context.time }}</h2>
+      <button class="icon-btn" (click)="onClose()" aria-label="Zamknij">✕</button>
+    </header>
+
+    <form (ngSubmit)="onSave()">
+      <label>
+        Kraj
+        <input name="country" type="text" [(ngModel)]="country" placeholder="np. Włochy" required />
+      </label>
+
+      <label>
+        Miasto
+        <div class="city-row">
+          <input name="city" type="text" [(ngModel)]="city" placeholder="np. Rzym" required />
+          <button type="button" class="secondary" (click)="fetchWeather()" [disabled]="loadingWeather">
+            {{ loadingWeather ? 'Pobieranie…' : 'Sprawdź pogodę' }}
+          </button>
+        </div>
+      </label>
+
+      <label>
+        Koszt wycieczki (PLN)
+        <input name="cost" type="number" min="0" step="1" [(ngModel)]="cost" placeholder="np. 2500" />
+      </label>
+
+      <label>
+        Notatki
+        <textarea name="notes" rows="2" [(ngModel)]="notes" placeholder="Dodatkowe informacje…"></textarea>
+      </label>
+
+      <div class="weather-box" *ngIf="weather">
+        <span class="icon">{{ weather.icon }}</span>
+        <div>
+          <div class="temp">{{ weather.temperatureC }}°C</div>
+          <div class="desc">{{ weather.description }} · wiatr {{ weather.windSpeedKmh }} km/h</div>
+        </div>
+      </div>
+      <p class="error" *ngIf="weatherError">{{ weatherError }}</p>
+
+      <footer>
+        <button type="button" class="danger" *ngIf="context.existing" (click)="onDelete()">Usuń wpis</button>
+        <div class="spacer"></div>
+        <button type="button" class="secondary" (click)="onClose()">Anuluj</button>
+        <button type="submit" class="primary">Zapisz</button>
+      </footer>
+    </form>
+  </div>
+</div>
